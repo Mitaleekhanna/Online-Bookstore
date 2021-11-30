@@ -6,6 +6,7 @@ import jade.core.Agent;
 import jade.core.AgentContainer;
 import jade.core.behaviours.*;
 import jade.wrapper.AgentController;
+import jade.lang.acl.ACLMessage;
 
      				
  public class UserAgent extends Agent 
@@ -65,5 +66,13 @@ import jade.wrapper.AgentController;
      	}else {
      		System.out.println(status+" Registered Successfully.");
      	 }
+     }
+     public void senduserid(String id, AID agentname) {
+    	 ACLMessage message = new ACLMessage(ACLMessage.INFORM);
+//         message.setConversationId(conversationId);
+         message.setContent(id);
+         AID agentid = new AID("YourAgentName", AID.ISLOCALNAME);
+         message.addReceiver(agentname);
+         send(message);
      }
  }  

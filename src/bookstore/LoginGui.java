@@ -3,16 +3,16 @@ import javax.swing.*;
 import java.awt.event.*;
 
 public class LoginGui extends JFrame{
-	private static JLabel l1,l2;
+	private static JLabel email_label,password_label;
 	JFrame f;
 	UserAgent UserAgent=new UserAgent();
 	public LoginGui() {
 		this.f=new JFrame("Login");//creating instance of JFrame  
-		l1=new JLabel("Email");  //Create label email
-	    l1.setBounds(30,15, 100,30); //x axis, y axis, width, height 
+		email_label=new JLabel("Email");  //Create label email
+		email_label.setBounds(30,15, 100,30); //x axis, y axis, width, height 
 	     
-	    l2=new JLabel("Password");  //Create label Password
-	    l2.setBounds(30,50, 100,30);    
+	    password_label=new JLabel("Password");  //Create label Password
+	    password_label.setBounds(30,50, 100,30);    
 	     
 	    JTextField emailtext = new JTextField(); //Create text field for email
 	    emailtext.setBounds(110, 15, 200, 30);
@@ -51,8 +51,8 @@ public class LoginGui extends JFrame{
 	    f.add(F_pass); //add password
 	    f.add(login_but);//adding button in JFrame  
 	    f.add(emailtext);  //add email
-	    f.add(l1);  // add label1 i.e. for email label
-	    f.add(l2); // add label2 i.e. for password
+	    f.add(email_label);  // add email label
+	    f.add(password_label); // add password
 	     
 	    f.setSize(400,180);//400 width and 500 height  
 	    f.setLayout(null);//using no layout managers  

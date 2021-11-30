@@ -100,4 +100,20 @@ public class DBConnect {
 		}
 		
 	}
+	public ResultSet getbooks() throws SQLException{
+		DBConnect db=new DBConnect(); //connect to database
+        String sql="select * from books"; //select all books
+        Statement stmt = db.con.createStatement();
+        ResultSet rs=stmt.executeQuery(sql);
+        return rs;
+
+	}
+	public ResultSet getbookswithattribute(String genre) throws SQLException{
+		DBConnect db=new DBConnect(); //connect to database
+        String sql="select * from books where genre='"+genre+"'"; //select all books
+        Statement stmt = db.con.createStatement();
+        ResultSet rs=stmt.executeQuery(sql);
+        return rs;
+
+	}
 }
