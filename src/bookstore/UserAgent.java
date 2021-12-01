@@ -58,7 +58,7 @@ import jade.lang.acl.ACLMessage;
 //             System.out.println(userName);
 //             System.out.println(password);
      }
-     public void loginuser(String email,String password) throws Exception {
+     public String loginuser(String email,String password) throws Exception {
     	 DBConnect db = new DBConnect();
      	 String status = db.loginuser(email, password);
      	 if(status == "false") {
@@ -66,6 +66,7 @@ import jade.lang.acl.ACLMessage;
      	}else {
      		System.out.println(status+" Registered Successfully.");
      	 }
+     	 return status;
      }
      public void senduserid(String id, AID agentname) {
     	 ACLMessage message = new ACLMessage(ACLMessage.INFORM);
