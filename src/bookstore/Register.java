@@ -20,20 +20,26 @@ import java.awt.Component;
 import javax.swing.SwingConstants;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JPasswordField;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Register extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField name;
 	private JLabel passwordLabel;
-	private JTextField password;
 	private JComboBox roleSelector;
 	private JLabel roleLabel;
 	private JLabel emailLabel;
 	private JTextField email;
 	private JLabel phoneLabel;
 	private JTextField phone;
-
+	private JTextArea address;
+	UserAgent UserAgent = new UserAgent();
+	private JPasswordField password;
 	/**
 	 * Launch the application.
 	 */
@@ -72,10 +78,6 @@ public class Register extends JFrame {
 		passwordLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		passwordLabel.setBounds(141, 92, 64, 13);
 		
-		password = new JTextField();
-		password.setBounds(211, 89, 127, 19);
-		password.setColumns(10);
-		
 		roleLabel = new JLabel("Role");
 		roleLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		roleLabel.setBounds(141, 121, 65, 13);
@@ -98,13 +100,26 @@ public class Register extends JFrame {
 		phoneLabel.setBounds(115, 185, 91, 13);
 		
 		phone = new JTextField();
+		phone.addKeyListener(new KeyAdapter() {
+			@Override
+	        public void keyPressed(KeyEvent ke) {
+	            String value = phone.getText();
+	            int l = value.length();
+	            if (ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9') {
+	            	phone.setEditable(true);
+	              
+	            } else {
+	            	phone.setEditable(false);
+	              
+	            }
+			}
+		});
 		phone.setBounds(211, 182, 127, 19);
 		phone.setColumns(10);
 		contentPane.setLayout(null);
 		contentPane.add(nameLabel);
 		contentPane.add(name);
 		contentPane.add(passwordLabel);
-		contentPane.add(password);
 		contentPane.add(roleLabel);
 		contentPane.add(phoneLabel);
 		contentPane.add(emailLabel);
@@ -112,7 +127,7 @@ public class Register extends JFrame {
 		contentPane.add(roleSelector);
 		contentPane.add(phone);
 		
-		JTextArea address = new JTextArea();
+		address = new JTextArea();
 		address.setBounds(211, 211, 127, 69);
 		contentPane.add(address);
 		
@@ -122,7 +137,34 @@ public class Register extends JFrame {
 		contentPane.add(addressLabel);
 		
 		JButton registerButton = new JButton("Register");
+		registerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(performRegistration()) {
+					JFrame home = new Home(roleSelector.getSelectedItem().toString());
+					home.setVisible(true);
+					dispose(); 
+				}
+			}
+		});
 		registerButton.setBounds(187, 316, 85, 21);
 		contentPane.add(registerButton);
+		
+		password = new JPasswordField();
+		password.setBounds(211, 89, 127, 19);
+		contentPane.add(password);
+	}
+	boolean performRegistration() {
+		String username = name.getText();
+		String passwordText = password.getText();
+		String userrole = roleSelector.getSelectedItem().toString();
+		String emailText = email.getText();
+		String phoneText = phone.getText();
+		String addressText = address.getText();
+		if (UserAgent != null) {
+			System.out.println("in useragent");
+			return UserAgent.registerUser(username, passwordText,userrole,emailText,phoneText,addressText);
+		}else {
+			return false;
+		}
 	}
 }

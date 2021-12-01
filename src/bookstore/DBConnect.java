@@ -49,7 +49,7 @@ public class DBConnect {
 			e1.printStackTrace();
 		}
 		try {
-			if(rscheck.next()!=false || rscheck != null) {
+			if(rscheck.next()==false && rscheck != null) {
 				String st = ("INSERT INTO users (name,password,user_role,email,phone_number,address,feedback) values ('"+userName+"','"+password+"','"+userrole+"','"+email+"','"+phone+"','"+address+"', '')");
 				try {
 					rs=stmt.executeUpdate(st);
@@ -90,9 +90,28 @@ public class DBConnect {
 		System.out.print(stcheck);
 		rscheck = stmt.executeQuery(stcheck);
 		System.out.print(rscheck);
-		if(rscheck.next()!=false || rscheck != null) {
+		if(rscheck.next()!=false && rscheck != null) {
 			System.out.print("in if");
 			return rscheck.getString("name");
+			
+		}else {
+			System.out.print("in else");
+			return "false";
+		}
+		
+	}
+	public String getUserRole(String email,String password) throws SQLException {
+		DBConnect db=new DBConnect();
+		Statement stmt = null;
+		ResultSet rscheck = null;
+		stmt = db.con.createStatement();
+		String stcheck = "SELECT user_role FROM users where email='"+email+"' AND password='"+password+"'";
+		System.out.print(stcheck);
+		rscheck = stmt.executeQuery(stcheck);
+		System.out.print(rscheck);
+		if(rscheck.next()!=false && rscheck != null) {
+			System.out.print("in if");
+			return rscheck.getString("user_role");
 			
 		}else {
 			System.out.print("in else");
@@ -108,11 +127,28 @@ public class DBConnect {
         return rs;
 
 	}
+	public ResultSet searchBooks(String keyword) throws SQLException{
+		DBConnect db=new DBConnect(); //connect to database
+        String sql="SELECT *  FROM `books` WHERE `isbn` LIKE '%"+keyword+"%' OR `name` LIKE '%"+keyword+"%' OR `author` LIKE '%"+keyword+"%' OR `description` LIKE '%"+keyword+"%' OR `genre` LIKE '%"+keyword+"%' OR `publication` LIKE '%"+keyword+"%'"; //select all books
+        Statement stmt = db.con.createStatement();
+        ResultSet rs=stmt.executeQuery(sql);
+        return rs;
+
+	}
 	public ResultSet getbookswithattribute(String genre) throws SQLException{
 		DBConnect db=new DBConnect(); //connect to database
         String sql="select * from books where genre='"+genre+"'"; //select all books
         Statement stmt = db.con.createStatement();
         ResultSet rs=stmt.executeQuery(sql);
+        return rs;
+
+	}
+	public int saveBook(Book book) throws SQLException{
+		DBConnect db=new DBConnect(); //connect to database
+        String sql=String.format("INSERT INTO `books`(`isbn`, `name`, `author`, `description`, `genre`, `publication`, `quantity`, `price`) "
+        		+ "VALUES ('%s','%s','%s','%s','%s','%s','%s','%s')",book.ISBN,book.title,book.author,book.description,book.genre,book.publication,book.quantity,book.price);
+        		Statement stmt = db.con.createStatement();
+        int rs=stmt.executeUpdate(sql);
         return rs;
 
 	}

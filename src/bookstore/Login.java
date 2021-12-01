@@ -18,14 +18,15 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JPasswordField;
 
 public class Login extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField username;
-	private JTextField password;
 	UserAgent UserAgent = new UserAgent();
 	private JLabel registerLabel;
+	private JPasswordField password;
 
 	/**
 	 * Launch the application.
@@ -78,31 +79,31 @@ public class Login extends JFrame {
 
 		JLabel passwordLabel = new JLabel("Password");
 		GridBagConstraints gbc_passwordLabel = new GridBagConstraints();
-		gbc_passwordLabel.anchor = GridBagConstraints.WEST;
+		gbc_passwordLabel.anchor = GridBagConstraints.EAST;
 		gbc_passwordLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_passwordLabel.gridx = 1;
 		gbc_passwordLabel.gridy = 2;
 		contentPane.add(passwordLabel, gbc_passwordLabel);
-
-		password = new JTextField();
-		password.setToolTipText("Enter Username");
-		GridBagConstraints gbc_password = new GridBagConstraints();
-		gbc_password.anchor = GridBagConstraints.NORTHWEST;
-		gbc_password.insets = new Insets(0, 0, 5, 0);
-		gbc_password.gridx = 2;
-		gbc_password.gridy = 2;
-		contentPane.add(password, gbc_password);
-		password.setColumns(10);
 
 		JButton btnNewButton = new JButton("Login");
 		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (validCredentials(username.getText(), password.getText())) {
-
+					JFrame home = new Home(getUserRole(username.getText(), password.getText()));
+					home.setVisible(true);
+					dispose(); 
 				}
 			}
 		});
+		
+		password = new JPasswordField();
+		GridBagConstraints gbc_password = new GridBagConstraints();
+		gbc_password.insets = new Insets(0, 0, 5, 0);
+		gbc_password.fill = GridBagConstraints.HORIZONTAL;
+		gbc_password.gridx = 2;
+		gbc_password.gridy = 2;
+		contentPane.add(password, gbc_password);
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.insets = new Insets(0, 0, 5, 0);
 		gbc_btnNewButton.anchor = GridBagConstraints.NORTH;
@@ -128,6 +129,8 @@ public class Login extends JFrame {
 	}
 
 	boolean validCredentials(String email, String password) {
+		//remove this line
+//		return true;
 		if (email.equals("")) // If email is null
 		{
 			JOptionPane.showMessageDialog(null, "Please enter username"); // Display dialog box with the message
@@ -151,4 +154,14 @@ public class Login extends JFrame {
 			}
 		}
 	}
+	String getUserRole(String email, String password) {
+		try {
+			return UserAgent.getUserRole(email, password);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 }
