@@ -140,8 +140,9 @@ public class Register extends JFrame {
 		registerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(performRegistration()) {
-					JFrame home = new Home(roleSelector.getSelectedItem().toString());
-					home.setVisible(true);
+//					JFrame home = new Home(roleSelector.getSelectedItem().toString());
+					JFrame login=new Login();
+					login.setVisible(true);
 					dispose(); 
 				}
 			}

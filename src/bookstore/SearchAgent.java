@@ -41,6 +41,20 @@ public class SearchAgent extends Agent{
     	
 	}
 	
+	public Book getBookFromISBN(String ISBN)  {
+		DBConnect db = new DBConnect();
+    	Book book;
+		try {
+			book = db.getBookFromISBN(ISBN);
+			return book;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new Book();
+		}
+    	
+	}
+	
 	
 	
 	

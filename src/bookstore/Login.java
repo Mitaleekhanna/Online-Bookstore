@@ -89,8 +89,8 @@ public class Login extends JFrame {
 		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (validCredentials(username.getText(), password.getText())) {
-					JFrame home = new Home(getUserRole(username.getText(), password.getText()));
+				if (!validCredentials(username.getText(), password.getText()).equals("false")) {
+					JFrame home = new Home(validCredentials(username.getText(), password.getText()),getUserRole(username.getText(), password.getText()));
 					home.setVisible(true);
 					dispose(); 
 				}
@@ -128,33 +128,38 @@ public class Login extends JFrame {
 		contentPane.add(registerLabel, gbc_registerLabel);
 	}
 
-	boolean validCredentials(String email, String password) {
+	String validCredentials(String email, String password) {
 		//remove this line
 //		return true;
 		if (email.equals("")) // If email is null
 		{
 			JOptionPane.showMessageDialog(null, "Please enter username"); // Display dialog box with the message
-			return false;
+			return "false";
 		} else if (password.equals("")) // If password is null
 		{
 			JOptionPane.showMessageDialog(null, "Please enter password"); // Display dialog box with the message
-			return false;
+			return "false";
 		} else {
 			try {
 				String status = UserAgent.loginuser(email, password);
-				if (status == "false") {
-					return false;
-				} else {
-					return true;
-				}
+				return status;
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-				return false;
+				return "false";
 			}
 		}
 	}
 	String getUserRole(String email, String password) {
+		try {
+			return UserAgent.getUserRole(email, password);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	String getUserId(String email, String password) {
 		try {
 			return UserAgent.getUserRole(email, password);
 		} catch (Exception e) {

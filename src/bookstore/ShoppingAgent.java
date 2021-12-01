@@ -1,6 +1,7 @@
 package bookstore;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.table.TableModel;
 
@@ -44,9 +45,73 @@ public class ShoppingAgent extends Agent{
             System.out.println("+++ Killed: " + agentID);
            
         }
-        
-        public void buybook() {
-        
+        public boolean addBookToCart(String user_id, String ISBN) {
+        	DBConnect db = new DBConnect();
+        	boolean status;
+    		try {
+    			status = db.addBookToCart(user_id,ISBN);
+    			return status;
+    		} catch (SQLException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    			return false;
+    		}
+            
         }
+        public TableModel getCartItems(String userId){
+    		DBConnect db = new DBConnect();
+        	ResultSet cartitems;
+    		try {
+    			cartitems = db.getCartItems(userId);
+    			return DbUtils.resultSetToTableModel(cartitems);
+    		} catch (SQLException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    			return DbUtils.resultSetToTableModel(null);
+    		}
+//        	SELECT *,SUM(cart.quantity) as totalQuantity ,(books.price*SUM(cart.quantity)) as totalPrice FROM `cart`  INNER join books on books.isbn=cart.isbn  where cart.user_id= GROUP by cart.`isbn`	
+        }
+        public float getCartTotal(String userId) {
+//        	SELECT *,SUM(quantity) as totalQuantity FROM `cart`  where user_id= GROUP by `isbn`
+    		DBConnect db = new DBConnect();
+        	ResultSet cartitems;
+    		try {
+    			return db.getCartTotal(userId);
+    		} catch (SQLException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    			return 0;
+    		}
+        }
+        
+        public int placeOrder(String userId,String type) {
+//        	SELECT *,SUM(quantity) as totalQuantity FROM `cart`  where user_id= GROUP by `isbn`
+    		DBConnect db = new DBConnect();
+        	ResultSet cartitems;
+        	int paymentId;
+    		try {
+    			return db.payAmount(userId,type);
+    		} catch (SQLException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    			return 0;
+    		}
+        }
+        
+        public ArrayList<Order> getOrders(String userId) {
+//        	SELECT *,SUM(quantity) as totalQuantity FROM `cart`  where user_id= GROUP by `isbn`
+    		DBConnect db = new DBConnect();
+        	ResultSet cartitems;
+        	int paymentId;
+    		try {
+    			return db.getOrders(userId);
+    		} catch (SQLException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    			return new ArrayList<Order>();
+    		}
+        }
+        
+        
 	
 }
