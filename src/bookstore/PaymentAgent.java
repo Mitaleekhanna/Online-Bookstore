@@ -47,4 +47,11 @@ public class PaymentAgent extends Agent{
         System.out.println("+++ Killed: " + agentID);
        }
     
+   public int addpayment(int order_id,int amount,String payment_type) throws SQLException {
+	 DBConnect db = new DBConnect();
+   	 int payment_id = db.addpayment(order_id,amount,payment_type);
+   	 System.out.println(payment_id +"added to payments"); 
+   	 return payment_id;
+   }
+   	
 }

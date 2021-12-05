@@ -17,6 +17,18 @@ public class SearchAgent extends Agent{
     	ResultSet booksset = db.getbooks();
     	return DbUtils.resultSetToTableModel(booksset);
 	}
+	public TableModel getbooksbykeyword(String keyword) throws SQLException {
+		DBConnect db = new DBConnect();
+    	ResultSet booksset = db.searchbookbykeyword(keyword);
+//    	System.out.print(DbUtils.resultSetToTableModel(booksset));
+    	return DbUtils.resultSetToTableModel(booksset);
+	}
+	public TableModel getbooksbyattribute(String name, String value) throws SQLException {
+		DBConnect db = new DBConnect();
+    	ResultSet booksset = db.getbooksbyattribute(name,value);
+//    	System.out.print(DbUtils.resultSetToTableModel(booksset));
+    	return DbUtils.resultSetToTableModel(booksset);
+	}
 	
 	
 	

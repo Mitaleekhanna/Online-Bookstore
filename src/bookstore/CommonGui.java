@@ -20,12 +20,13 @@ public class CommonGui extends JFrame{
 	            TableModel tb = null;
 				try {
 					System.out.print("in try");
-					tb = SearchAgent.getbooks();
-					book_list.setModel(tb); 
+					tb = SearchAgent.getbooksbykeyword("mystery");
+					book_list.setModel(tb);
+					System.out.print(book_list);
 					f.add(book_list);
 					JScrollPane scrollPane = new JScrollPane(book_list); 
 					f.add(scrollPane); //add scrollpane
-					f.setSize(800, 400); //set size for frame
+					f.setSize(1000, 600); //set size for frame
 			        f.setVisible(true);
 		            
 		            

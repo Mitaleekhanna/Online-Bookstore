@@ -18,21 +18,20 @@ import jade.lang.acl.ACLMessage;
      {
          addBehaviour(  // -------- Anonymous SimpleBehaviour 
  
-             new SimpleBehaviour( this ) 
+        new CyclicBehaviour() 
              {
-                 int n=0;
-                 
-                 public void action() 
+        	  
+        	public void action() 
                  {
-                     System.out.println( "Hello World! My name is " + 
-                         myAgent.getLocalName() );
-                     n++;
+                	 ACLMessage msg = null;
+               	  	 msg = myAgent.receive();
+               	  	 if(msg != null) {
+               	  		 System.out.print(msg);
+               	  	 }
+//                     System.out.println( "Hello World! My name is " + myAgent.getLocalName() );
+                    
                  }
          
-                 public boolean done() {  
-                	 killAgent( myAgent.getLocalName());
-                	 return true;  
-                	 }
              }
          );
      }   //  --- setup ---
@@ -64,7 +63,7 @@ import jade.lang.acl.ACLMessage;
      	 if(status == "false") {
      		System.out.println("Some error occured");
      	}else {
-     		System.out.println(status+" Registered Successfully.");
+     		System.out.println(status+" logged in Successfully.");
      	 }
      	 return status;
      }
@@ -76,4 +75,5 @@ import jade.lang.acl.ACLMessage;
          message.addReceiver(agentname);
          send(message);
      }
+     
  }  

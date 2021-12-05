@@ -90,12 +90,13 @@ public class DBConnect {
 		System.out.print(stcheck);
 		rscheck = stmt.executeQuery(stcheck);
 		System.out.print(rscheck);
+		db.closeConnection();
 		if(rscheck.next()!=false || rscheck != null) {
-			System.out.print("in if");
+//			System.out.print("in if");
 			return rscheck.getString("name");
 			
 		}else {
-			System.out.print("in else");
+//			System.out.print("in else");
 			return "false";
 		}
 		
@@ -108,12 +109,59 @@ public class DBConnect {
         return rs;
 
 	}
-	public ResultSet getbookswithattribute(String genre) throws SQLException{
+	public ResultSet getbooksbyattribute(String name, String value) throws SQLException{
 		DBConnect db=new DBConnect(); //connect to database
-        String sql="select * from books where genre='"+genre+"'"; //select all books
+        String sql="select * from books where "+name+"='"+value+"'"; //select all books
         Statement stmt = db.con.createStatement();
         ResultSet rs=stmt.executeQuery(sql);
         return rs;
 
+	}
+	public ResultSet searchbookbykeyword(String keyword) throws SQLException {
+		DBConnect db=new DBConnect(); //connect to database
+        String sql="SELECT * FROM books WHERE keywords like '%"+keyword+"%'"; //select all books
+        Statement stmt = db.con.createStatement();
+        ResultSet rs=stmt.executeQuery(sql);
+        return rs;
+		
+	}
+	public String addorder(int uid,int bid,int quantity) throws SQLException {
+		DBConnect db=new DBConnect(); //connect to database
+        String sql="INSERT INTO orders (isbn,user_id,payment_id,status,quantity) VALUES ("+bid+","+uid+",-1,'pending',"+quantity+")"; //select all books
+        Statement stmt = db.con.createStatement();
+        int rs=stmt.executeUpdate(sql);
+        String sql1 = "SELECT name FROM books where isbn="+bid;
+        ResultSet rs1 = stmt.executeQuery(sql1);
+        System.out.print(rs1);
+        rs1.next();
+        return rs1.getString("name");
+        
+        
+	}
+	public int getlastorderid() throws SQLException {
+		DBConnect db=new DBConnect(); //connect to database
+        String sql="SELECT MAX(order_id) as order_id FROM orders";
+        Statement stmt = db.con.createStatement();
+        ResultSet rs=stmt.executeQuery(sql);
+        rs.next();
+        return rs.getInt("order_id");
+	}
+	public int getamountbyisbn(int isbn) throws SQLException {
+		DBConnect db=new DBConnect(); //connect to database
+        String sql="SELECT price FROM books where isbn="+isbn;
+        Statement stmt = db.con.createStatement();
+        ResultSet rs=stmt.executeQuery(sql);
+        rs.next();
+        return rs.getInt("price");
+	}
+	public int addpayment(int order_id,int amount,String payment_type) throws SQLException {
+		DBConnect db=new DBConnect(); //connect to database
+        String sql="INSERT INTO payments (order_id,amount,payment_type) VALUES ("+order_id+","+amount+",'"+payment_type+"')"; //select all books
+        Statement stmt = db.con.createStatement();
+        int rs=stmt.executeUpdate(sql);
+        String sql1 = "SELECT MAX(payment_id) as payment_id FROM payments";
+        ResultSet rs1 = stmt.executeQuery(sql1);
+        rs1.next();
+        return rs1.getInt("payment_id");
 	}
 }
