@@ -22,43 +22,54 @@ import javax.swing.JPasswordField;
 
 public class Login extends JFrame {
 
-	private JPanel contentPane;
+	private JPanel panel1;
 	private JTextField username;
-	UserAgent UserAgent = new UserAgent();
+	UserManagerAgent UserManagerAgent = new UserManagerAgent();
 	private JLabel registerLabel;
 	private JPasswordField password;
+	JFrame jFrame;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Login frame = new Login();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					Login frame = new Login();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the frame.
 	 */
-	public Login() {
+	public Login(UserManagerAgent UserManagerAgent) {
+		System.out.print("in login page");
+		this.jFrame = new JFrame();
+		 this.jFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+	            @Override
+	            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+	                super.windowClosing(windowEvent);
+	                UserManagerAgent.killAgent(UserManagerAgent.getLocalName());
+	            }
+	        });
+		 this.jFrame.setSize(400, 400);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
+		panel1 = new JPanel();
+		panel1.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(panel1);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[] { 123, 52, 96, 0 };
 		gbl_contentPane.rowHeights = new int[] { 76, 19, 19, 21, 0, 0 };
 		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-		contentPane.setLayout(gbl_contentPane);
+		panel1.setLayout(gbl_contentPane);
 
 		JLabel usernameLabel = new JLabel("Username");
 		GridBagConstraints gbc_usernameLabel = new GridBagConstraints();
@@ -66,7 +77,7 @@ public class Login extends JFrame {
 		gbc_usernameLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_usernameLabel.gridx = 1;
 		gbc_usernameLabel.gridy = 1;
-		contentPane.add(usernameLabel, gbc_usernameLabel);
+		panel1.add(usernameLabel, gbc_usernameLabel);
 
 		username = new JTextField();
 		GridBagConstraints gbc_username = new GridBagConstraints();
@@ -74,7 +85,7 @@ public class Login extends JFrame {
 		gbc_username.insets = new Insets(0, 0, 5, 0);
 		gbc_username.gridx = 2;
 		gbc_username.gridy = 1;
-		contentPane.add(username, gbc_username);
+		panel1.add(username, gbc_username);
 		username.setColumns(10);
 
 		JLabel passwordLabel = new JLabel("Password");
@@ -83,16 +94,24 @@ public class Login extends JFrame {
 		gbc_passwordLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_passwordLabel.gridx = 1;
 		gbc_passwordLabel.gridy = 2;
-		contentPane.add(passwordLabel, gbc_passwordLabel);
+		panel1.add(passwordLabel, gbc_passwordLabel);
 
 		JButton btnNewButton = new JButton("Login");
 		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (!validCredentials(username.getText(), password.getText()).equals("false")) {
-					JFrame home = new Home(validCredentials(username.getText(), password.getText()),getUserRole(username.getText(), password.getText()));
-					home.setVisible(true);
-					dispose(); 
+					try {
+						UserManagerAgent.loginuser(username.getText(), password.getText());
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+//					JFrame home = new Home(validCredentials(username.getText(), password.getText()),getUserRole(username.getText(), password.getText()));
+//					home.setVisible(true);
+//					//create the new agent using main agent class
+//					
+//					dispose(); 
 				}
 			}
 		});
@@ -103,29 +122,29 @@ public class Login extends JFrame {
 		gbc_password.fill = GridBagConstraints.HORIZONTAL;
 		gbc_password.gridx = 2;
 		gbc_password.gridy = 2;
-		contentPane.add(password, gbc_password);
+		panel1.add(password, gbc_password);
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.insets = new Insets(0, 0, 5, 0);
 		gbc_btnNewButton.anchor = GridBagConstraints.NORTH;
 		gbc_btnNewButton.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnNewButton.gridx = 2;
 		gbc_btnNewButton.gridy = 3;
-		contentPane.add(btnNewButton, gbc_btnNewButton);
-
-		registerLabel = new JLabel("Register");
-		registerLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JFrame register = new Register();
-				register.setVisible(true);
-				dispose(); 
-			}
-		});
-		registerLabel.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		GridBagConstraints gbc_registerLabel = new GridBagConstraints();
-		gbc_registerLabel.gridx = 2;
-		gbc_registerLabel.gridy = 4;
-		contentPane.add(registerLabel, gbc_registerLabel);
+		panel1.add(btnNewButton, gbc_btnNewButton);
+		
+		/*
+		 * registerLabel = new JLabel("Register"); registerLabel.addMouseListener(new
+		 * MouseAdapter() {
+		 * 
+		 * @Override public void mouseClicked(MouseEvent e) { JFrame register = new
+		 * Register(); register.setVisible(true); dispose(); } });
+		 * registerLabel.setFont(new Font("Tahoma", Font.PLAIN, 10)); GridBagConstraints
+		 * gbc_registerLabel = new GridBagConstraints(); gbc_registerLabel.gridx = 2;
+		 * gbc_registerLabel.gridy = 4; panel1.add(registerLabel, gbc_registerLabel);
+		 */
+//		getContentPane().add(panel1);
+//		panel1.setVisible(true);
+		this.jFrame.add(panel1);
+		this.jFrame.setVisible(true);
 	}
 
 	String validCredentials(String email, String password) {
@@ -140,19 +159,20 @@ public class Login extends JFrame {
 			JOptionPane.showMessageDialog(null, "Please enter password"); // Display dialog box with the message
 			return "false";
 		} else {
-			try {
-				String status = UserAgent.loginuser(email, password);
-				return status;
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-				return "false";
-			}
+			return "true";
+//			try {
+//				String status = UserManagerAgent.loginuser(email, password);
+//				return status;
+//			} catch (Exception e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//				return "false";
+//			}
 		}
 	}
 	String getUserRole(String email, String password) {
 		try {
-			return UserAgent.getUserRole(email, password);
+			return UserManagerAgent.getUserRole(email, password);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -161,12 +181,14 @@ public class Login extends JFrame {
 	}
 	String getUserId(String email, String password) {
 		try {
-			return UserAgent.getUserRole(email, password);
+			return UserManagerAgent.getUserRole(email, password);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
+
+
 }

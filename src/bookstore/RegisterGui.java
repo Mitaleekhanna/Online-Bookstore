@@ -13,7 +13,7 @@ public class RegisterGui extends JFrame{
 	private static JTextField username,emailtext,phonetext,addresstext;
 	private static JButton button;
 	private static JPasswordField Password;
-	UserAgent UserAgent=new UserAgent();
+	CustomerAgent UserAgent=new CustomerAgent();
 	JFrame frame;
 	public RegisterGui() {
 		JPanel panel = new JPanel();

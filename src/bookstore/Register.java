@@ -38,7 +38,7 @@ public class Register extends JFrame {
 	private JLabel phoneLabel;
 	private JTextField phone;
 	private JTextArea address;
-	UserAgent UserAgent = new UserAgent();
+	CustomerAgent UserAgent = new CustomerAgent();
 	private JPasswordField password;
 	/**
 	 * Launch the application.

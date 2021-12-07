@@ -18,21 +18,14 @@ public class CommonGui extends JFrame{
 	             
 	            
 	            TableModel tb = null;
-				try {
-					System.out.print("in try");
-					tb = SearchAgent.getbooks();
-					book_list.setModel(tb); 
-					f.add(book_list);
-					JScrollPane scrollPane = new JScrollPane(book_list); 
-					f.add(scrollPane); //add scrollpane
-					f.setSize(800, 400); //set size for frame
-			        f.setVisible(true);
-		            
-		            
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				System.out.print("in try");
+				tb = SearchAgent.getbooks();
+				book_list.setModel(tb); 
+				f.add(book_list);
+				JScrollPane scrollPane = new JScrollPane(book_list); 
+				f.add(scrollPane); //add scrollpane
+				f.setSize(800, 400); //set size for frame
+				f.setVisible(true);
 	            
 	                   
 	       }

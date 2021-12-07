@@ -1,12 +1,14 @@
 package bookstore;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class DBConnect {
 	private String USERNAME="root";
 	private String PASSWORD="";
-	private String DBNAME="bookstore";	
+	private String DBNAME="new_bookstore";	
 	static Connection con;
 	DBConnect() {
 		try {
@@ -72,35 +74,37 @@ public class DBConnect {
 		}
 		 
 	}
-	public static void main(String[] args) throws SQLException {
-		// TODO Auto-generated method stub
-		DBConnect db=new DBConnect();
-		Statement stmt=db.con.createStatement();
-		
-		ResultSet rs=stmt.executeQuery("select 10+1;"
-				+ "");  
-		while(rs.next())  
-		System.out.println(rs.getInt(1)+"  ");  
-		
-	}
-	public String loginuser(String email,String password) throws SQLException {
+//	public static void main(String[] args) throws SQLException {
+//		// TODO Auto-generated method stub
+//		DBConnect db=new DBConnect();
+//		Statement stmt=db.con.createStatement();
+//		
+//		ResultSet rs=stmt.executeQuery("select 10+1;"
+//				+ "");  
+//		while(rs.next())  
+//		System.out.println(rs.getInt(1)+"  ");  
+//		
+//	}
+	public Map<String, String> loginuser(String email,String password) throws SQLException {
 		DBConnect db=new DBConnect();
 		Statement stmt = null;
 		ResultSet rscheck = null;
+		Map<String, String> user_data = new HashMap<String, String>();
+		
 		stmt = db.con.createStatement();
-		String stcheck = "SELECT user_id FROM users where email='"+email+"' AND password='"+password+"'";
+		String stcheck = "SELECT * FROM users where email='"+email+"' AND password='"+password+"'";
 		System.out.print(stcheck);
 		rscheck = stmt.executeQuery(stcheck);
 		System.out.print(rscheck);
 		if(rscheck.next()!=false && rscheck != null) {
-			System.out.print("in if");
-			return rscheck.getString("user_id");
-			
-		}else {
-			System.out.print("in else");
-			return "false";
+//			System.out.print("in if");
+			user_data.put("name", rscheck.getString("name"));
+			user_data.put("user_role", rscheck.getString("user_role"));
 		}
-		
+		else {
+			user_data = null;
+		}
+		return user_data;
 	}
 	public String getUserRole(String email,String password) throws SQLException {
 		DBConnect db=new DBConnect();

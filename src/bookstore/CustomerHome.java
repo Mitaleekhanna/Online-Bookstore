@@ -39,7 +39,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Dimension;
 
-public class Home extends JFrame {
+public class CustomerHome extends JFrame {
 	//User details
 	String userId;
 	
@@ -81,44 +81,28 @@ public class Home extends JFrame {
 	
 	//order fields
 	JPanel orderSet;
-	Home(String userId,String userType){
-		this();
-		this.userId=userId;
-		updateCart();
-		this.userType=userType;
-		System.out.println(userId);
-		switch (this.userType) {
-		case "librarian":
-			
-			break;
 
-		default:
-			AddBooks.setVisible(false);
-			break;
-		}
-		repaint();
-	}
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Home frame = new Home();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					Home frame = new Home();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the frame.
 	 */
-	public Home() {
+	public CustomerHome() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 600);
 		contentPane = new JPanel();
@@ -469,14 +453,8 @@ public class Home extends JFrame {
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 		navbar.add(cart);
 		
-		AddBooks = new JButton("AddBooks");
-		AddBooks.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				CardLayout cl = (CardLayout)(container.getLayout());
-			    cl.show(container, "librarianPanel");
-			}
-		});
-		navbar.add(AddBooks);
+
+	
 		
 		JButton Profile = new JButton("Profile");
 		Profile.addActionListener(new ActionListener() {
@@ -491,9 +469,9 @@ public class Home extends JFrame {
 		JButton Logout = new JButton("Logout");
 		Logout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFrame login = new Login();
-				login.setVisible(true);
-				dispose();
+//				JFrame login = new Login();
+//				login.setVisible(true);
+//				dispose();
 			}
 		});
 		navbar.add(Logout);

@@ -5,7 +5,7 @@ import java.awt.event.*;
 public class LoginGui extends JFrame{
 	private static JLabel email_label,password_label;
 	JFrame f;
-	UserAgent UserAgent=new UserAgent();
+	CustomerAgent UserAgent=new CustomerAgent();
 	public LoginGui() {
 		this.f=new JFrame("Login");//creating instance of JFrame  
 		email_label=new JLabel("Email");  //Create label email
