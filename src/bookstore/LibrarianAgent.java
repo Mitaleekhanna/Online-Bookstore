@@ -7,22 +7,35 @@ import jade.core.AgentContainer;
 import jade.core.behaviours.*;
 import jade.wrapper.AgentController;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
      				
  public class LibrarianAgent extends MainAgent
- {   static int len = 1;
+ {   LibrarianHome Lbhome;
+ 		
 	 public LibrarianAgent() {
 		 System.out.println("in librarian agent");
 	 }  
      protected void setup() 
      {
     	 System.out.println("librarian-agent " + getAID().getName() + "is ready.");
-    	 new LibrarianHome(this);
+    	 Lbhome = new LibrarianHome(this);
 
-         addBehaviour(new TickerBehaviour(this, Long.valueOf(10000)) {
-             protected void onTick() {
-                 System.out.println("Librarian-agent " + getAID().getName() + "is cycling.");
-             }
-         });
-     }   //  --- setup ---
-}  
+    	 addBehaviour(new CyclicBehaviour() {
+             public void action() {
+                 ACLMessage msg, reply = null;
+
+                 msg = myAgent.receive();
+
+                 if (msg != null) {
+                	 String content = msg.getContent();
+                	 System.out.print(content);
+                	 if (msg.getConversationId() == Constants.ADD_BOOKS){
+                		 Lbhome.addBooktoList();
+                	 }
+                 }
+               }
+                 
+     }); //  --- setup ---
+     }
+ }

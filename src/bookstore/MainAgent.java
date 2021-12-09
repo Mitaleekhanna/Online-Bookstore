@@ -71,6 +71,17 @@ public class MainAgent extends Agent {
             e.printStackTrace();
         }
     }
+    protected void createAgentwithArgs(String name, String className,Object[] arg) {
+        AID agentID = new AID(name, AID.ISLOCALNAME);
+        AgentContainer controller = getContainerController();
+        try {
+            AgentController agent = controller.createNewAgent(name, className, arg);
+            agent.start();
+            System.out.println("+++ Created: " + agentID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     protected void killAgent(String name) {
         AID agentID = new AID(name, AID.ISLOCALNAME);

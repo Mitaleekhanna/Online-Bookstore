@@ -9,26 +9,26 @@ import jade.wrapper.AgentController;
 import jade.lang.acl.ACLMessage;
 
      				
- public class CustomerAgent extends MainAgent
+ public class CartAgent extends MainAgent
  {   static int len = 1;
  	 String userID;
-	 public CustomerAgent() {
+	 public CartAgent() {
 //		 userID = user_id;
-		 System.out.println("in customeragent");
+		 System.out.println("in cartagent");
 	 }  
      protected void setup() 
      {
-    	 System.out.println("Customer-agent " + getAID().getName() + "is ready.");
+    	 System.out.println("cart-agent " + getAID().getName() + "is ready.");
     	 Object[] args = getArguments();
     	 userID = (String)args[0]; 
-    	 new CustomerHome(this,userID);
+    	 new Cart(this,userID);
 
          addBehaviour(new TickerBehaviour(this, Long.valueOf(10000)) {
              protected void onTick() {
-                 System.out.println("customer-agent " + getAID().getName() + "is cycling.");
+                 System.out.println("cart-agent " + getAID().getName() + "is cycling.");
              }
          });
-     }   //  --- setup ---
+     } //  --- setup ---
     
 
 

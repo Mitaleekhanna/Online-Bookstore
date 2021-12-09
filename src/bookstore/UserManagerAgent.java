@@ -14,6 +14,7 @@ import jade.lang.acl.ACLMessage;
  public class UserManagerAgent extends MainAgent
  {  
 	 public UserManagerAgent() {
+		 
 		 System.out.println("in usermanageragent");
 	 }  
      protected void setup() 
@@ -47,7 +48,12 @@ import jade.lang.acl.ACLMessage;
      	 if(user_data != null) {
      		System.out.print(user_data.get("name"));
      		if(user_data.get("user_role").equals("customer")) {
-     			createAgent("customer:"+user_data.get("name"), "bookstore.CustomerAgent");
+//     			String userID = String.valueOf(user_data.get("user_id"));
+     			 Object[] args = new Object[1];
+     			 args[0] = user_data.get("user_id");
+     			createAgentwithArgs("customer:"+user_data.get("name"), "bookstore.CustomerAgent",args);
+     			
+     			
      		}
      		else {
      			createAgent("librarian:"+user_data.get("name"), "bookstore.LibrarianAgent");
@@ -65,11 +71,11 @@ import jade.lang.acl.ACLMessage;
      	 }
      	 return status;
      }
-     public void sendMessage(AID customer, String messageText, String projectName, String conversationId) {
-         ACLMessage message = new ACLMessage(ACLMessage.INFORM);
-         message.setConversationId(conversationId);
-         message.setContent(projectName + ":" + messageText);
-         message.addReceiver(customer);
-         send(message);
-     }
+     public  void sendmessage(String content, AID receiver, BookAddingAgent BookAddingAgent, String conversationId) {
+		    ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+		    msg.setContent(content);
+		    msg.setConversationId(conversationId);
+		    msg.addReceiver(receiver);
+		    BookAddingAgent.send(msg);
+	 }
  }  

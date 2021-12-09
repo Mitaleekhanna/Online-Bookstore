@@ -100,6 +100,7 @@ public class DBConnect {
 //			System.out.print("in if");
 			user_data.put("name", rscheck.getString("name"));
 			user_data.put("user_role", rscheck.getString("user_role"));
+			user_data.put("user_id", rscheck.getString("user_id"));
 		}
 		else {
 			user_data = null;
@@ -183,6 +184,13 @@ public class DBConnect {
 
 	}
 	
+	public ResultSet getBookRowFromISBN(String ISBN) throws SQLException {
+		DBConnect db=new DBConnect(); //connect to database
+        String sql="select * from books"; //select all books
+        Statement stmt = db.con.createStatement();
+        ResultSet rs=stmt.executeQuery(sql);
+        return rs;
+	}
 	public boolean addBookToCart(String userId,String ISBN) throws SQLException{
 		DBConnect db=new DBConnect(); //connect to database
         String sql="SELECT `quantity` FROM `books` WHERE `isbn`="+ISBN; //validate quantity

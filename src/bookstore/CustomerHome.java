@@ -43,6 +43,7 @@ public class CustomerHome extends JFrame {
 	//User details
 	String userId;
 	
+	JFrame jFrame;
 	private JPanel contentPane;
 	private JTable table;
 	private JTextField searchKeyword;
@@ -102,7 +103,17 @@ public class CustomerHome extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public CustomerHome() {
+	public CustomerHome(CustomerAgent CustomerAgent, String user_id) {
+		userId = user_id;
+		this.jFrame = new JFrame();
+		 this.jFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+	            @Override
+	            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+	                super.windowClosing(windowEvent);
+	                CustomerAgent.killAgent(CustomerAgent.getLocalName());
+	            }
+	        });
+		this.jFrame.setSize(400, 400);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 600);
 		contentPane = new JPanel();
@@ -113,34 +124,34 @@ public class CustomerHome extends JFrame {
 
 		container.setLayout(new CardLayout(0, 0));
 		
-		JPanel searchPanel = new JPanel();
-		container.add(searchPanel, "searchPanel");
-		searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.Y_AXIS));
+		JPanel homePanel = new JPanel();
+		container.add(homePanel, "homePanel");
+		homePanel.setLayout(new BoxLayout(homePanel, BoxLayout.Y_AXIS));
 		
 		JPanel panel = new JPanel();
-		searchPanel.add(panel);
+		homePanel.add(panel);
 		
-		JLabel searchLabel = new JLabel("Enter keyword");
-		panel.add(searchLabel);
-		
-		searchKeyword = new JTextField();
-		panel.add(searchKeyword);
-		searchKeyword.setColumns(10);
-		
-		JButton searchButton = new JButton("Lookup");
-		searchButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				table.setModel(searchAgent.searchBooks(searchKeyword.getText()));
-			}
-		});
-		panel.add(searchButton);
-		
-		JLabel results = new JLabel("Searched results");
+//		JLabel searchLabel = new JLabel("Enter keyword");
+//		panel.add(searchLabel);
+//		
+//		searchKeyword = new JTextField();
+//		panel.add(searchKeyword);
+//		searchKeyword.setColumns(10);
+//		
+//		JButton searchButton = new JButton("Lookup");
+//		searchButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				table.setModel(searchAgent.searchBooks(searchKeyword.getText()));
+//			}
+//		});
+//		panel.add(searchButton);
+//		
+		JLabel results = new JLabel("All Books");
 		results.setAlignmentX(Component.CENTER_ALIGNMENT);
-		searchPanel.add(results);
+		homePanel.add(results);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		searchPanel.add(scrollPane);
+		homePanel.add(scrollPane);
 		
 		table = new JTable();
 		table.addMouseListener(new MouseAdapter() {
@@ -159,7 +170,7 @@ public class CustomerHome extends JFrame {
 		table.setModel(searchAgent.getbooks());
 		
 		JPanel searchResultsPanel = new JPanel();
-		searchPanel.add(searchResultsPanel);
+		homePanel.add(searchResultsPanel);
 		
 		JPanel cartPanel = new JPanel();
 		container.add(cartPanel, "cartPanel");
@@ -280,7 +291,8 @@ public class CustomerHome extends JFrame {
 		JButton addTocart = new JButton("Add to cart");
 		addTocart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				System.out.print(userId);
+				System.out.print(detailsISBN.getText());
 				if(shoppingAgent.addBookToCart(userId,detailsISBN.getText())) {
 					JOptionPane.showMessageDialog(null, "Book added to cart."); 
 				}else {
@@ -434,11 +446,19 @@ public class CustomerHome extends JFrame {
 		
 		JPanel navbar = new JPanel();
 
+		JButton home = new JButton("Home");
+		home.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cl = (CardLayout)(container.getLayout());
+			    cl.show(container, "homePanel");
+			}
+		});
+		navbar.add(home);
+		
 		JButton search = new JButton("Search");
 		search.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CardLayout cl = (CardLayout)(container.getLayout());
-			    cl.show(container, "searchPanel");
+				CustomerAgent.createAgent("SearchAgent", "bookstore.SearchAgent");
 			}
 		});
 		navbar.add(search);
@@ -446,8 +466,12 @@ public class CustomerHome extends JFrame {
 		JButton cart = new JButton("Cart");
 		cart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CardLayout cl = (CardLayout)(container.getLayout());
-			    cl.show(container, "cartPanel");
+//				CardLayout cl = (CardLayout)(container.getLayout());
+//			    cl.show(container, "cartPanel");
+				 Object[] args = new Object[1];
+     			 args[0] = userId;
+     			CustomerAgent.createAgentwithArgs("CartAgent", "bookstore.CartAgent",args);
+				
 			}
 		});
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
@@ -472,6 +496,10 @@ public class CustomerHome extends JFrame {
 //				JFrame login = new Login();
 //				login.setVisible(true);
 //				dispose();
+				CustomerAgent.killAgent(CustomerAgent.getLocalName());
+				CustomerAgent.createAgent("UserManager1", "bookstore.UserManagerAgent");
+				jFrame.dispose();
+
 			}
 		});
 		navbar.add(Logout);
@@ -690,7 +718,8 @@ public class CustomerHome extends JFrame {
 		orderSet = new JPanel();
 		profilePanel.add(orderSet);
 		orderSet.setLayout(new BoxLayout(orderSet, BoxLayout.Y_AXIS));
-		
+		this.jFrame.add(contentPane);
+		this.jFrame.setVisible(true);
 //		JPanel order = new JPanel();
 //		orderSet.add(order);
 //		order.setLayout(new BoxLayout(order, BoxLayout.Y_AXIS));

@@ -21,6 +21,7 @@ import javax.swing.BoxLayout;
 import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.GroupLayout;
@@ -33,10 +34,13 @@ import com.jgoodies.forms.layout.FormSpecs;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 import net.miginfocom.swing.MigLayout;
+import net.proteanit.sql.DbUtils;
+
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Vector;
 import java.awt.Dimension;
 
 public class LibrarianHome extends JFrame {
@@ -138,34 +142,19 @@ public class LibrarianHome extends JFrame {
 
 		container.setLayout(new CardLayout(0, 0));
 		
-		JPanel searchPanel = new JPanel();
-		container.add(searchPanel, "searchPanel");
-		searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.Y_AXIS));
+		JPanel homepanel = new JPanel();
+		container.add(homepanel, "homePanel");
+		homepanel.setLayout(new BoxLayout(homepanel, BoxLayout.Y_AXIS));
 		
 		JPanel panel = new JPanel();
-		searchPanel.add(panel);
+		homepanel.add(panel);
 		
-		JLabel searchLabel = new JLabel("Enter keyword");
-		panel.add(searchLabel);
-		
-		searchKeyword = new JTextField();
-		panel.add(searchKeyword);
-		searchKeyword.setColumns(10);
-		
-		JButton searchButton = new JButton("Lookup");
-		searchButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				table.setModel(searchAgent.searchBooks(searchKeyword.getText()));
-			}
-		});
-		panel.add(searchButton);
-		
-		JLabel results = new JLabel("Searched results");
+		JLabel results = new JLabel("All Books");
 		results.setAlignmentX(Component.CENTER_ALIGNMENT);
-		searchPanel.add(results);
+		homepanel.add(results);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		searchPanel.add(scrollPane);
+		homepanel.add(scrollPane);
 		
 		table = new JTable();
 		table.addMouseListener(new MouseAdapter() {
@@ -184,7 +173,7 @@ public class LibrarianHome extends JFrame {
 		table.setModel(searchAgent.getbooks());
 		
 		JPanel searchResultsPanel = new JPanel();
-		searchPanel.add(searchResultsPanel);
+		homepanel.add(searchResultsPanel);
 		
 		JPanel cartPanel = new JPanel();
 		container.add(cartPanel, "cartPanel");
@@ -302,26 +291,12 @@ public class LibrarianHome extends JFrame {
 		detailsDescription.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		detailsDescription.setHorizontalAlignment(SwingConstants.LEFT);
 		
-		JButton addTocart = new JButton("Add to cart");
-		addTocart.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
 
-				if(shoppingAgent.addBookToCart(userId,detailsISBN.getText())) {
-					JOptionPane.showMessageDialog(null, "Book added to cart."); 
-				}else {
-			
-					JOptionPane.showMessageDialog(null, "Error adding book to the cart"); 
-				}
-				updateCart();
-			}
-		});
-		addTocart.setFont(new Font("Tahoma", Font.BOLD, 14));
-		
 		JButton btnNewButton_1 = new JButton("Back");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CardLayout cl = (CardLayout)(container.getLayout());
-			    cl.show(container, "searchPanel");
+			    cl.show(container, "homePanel");
 			}
 		});
 		GroupLayout gl_detailsPanel = new GroupLayout(detailsPanel);
@@ -331,7 +306,7 @@ public class LibrarianHome extends JFrame {
 					.addGap(132)
 					.addComponent(btnNewButton_1)
 					.addGap(18)
-					.addComponent(addTocart, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//					.addComponent(addTocart, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 					.addGap(230))
 				.addGroup(gl_detailsPanel.createSequentialGroup()
 					.addGap(176)
@@ -451,19 +426,26 @@ public class LibrarianHome extends JFrame {
 							.addComponent(detailsDateAdded)))
 					.addGap(31)
 					.addGroup(gl_detailsPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(addTocart)
+//						.addComponent(addTocart)
 						.addComponent(btnNewButton_1))
 					.addGap(165))
 		);
 		detailsPanel.setLayout(gl_detailsPanel);
 		
 		JPanel navbar = new JPanel();
-
+		
+		JButton home = new JButton("Home");
+		home.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cl = (CardLayout)(container.getLayout());
+			    cl.show(container, "homePanel");
+			}
+		});
+		navbar.add(home);
 		JButton search = new JButton("Search");
 		search.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CardLayout cl = (CardLayout)(container.getLayout());
-			    cl.show(container, "searchPanel");
+				LibrarianAgent.createAgent("SearchAgent", "bookstore.SearchAgent");
 			}
 		});
 		navbar.add(search);
@@ -473,8 +455,9 @@ public class LibrarianHome extends JFrame {
 		AddBooks = new JButton("AddBooks");
 		AddBooks.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CardLayout cl = (CardLayout)(container.getLayout());
-			    cl.show(container, "librarianPanel");
+//				CardLayout cl = (CardLayout)(container.getLayout());
+//			    cl.show(container, "librarianPanel");
+				LibrarianAgent.createAgent("AddBooks","bookstore.BookAddingAgent");
 			}
 		});
 		navbar.add(AddBooks);
@@ -484,11 +467,9 @@ public class LibrarianHome extends JFrame {
 		Logout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				LibrarianAgent.killAgent(LibrarianAgent.getLocalName());
-				UserManagerAgent useragent = new UserManagerAgent();
-				JFrame login = new Login(useragent);
-				login.setVisible(true);
-				dispose();
-			}
+				LibrarianAgent.createAgent("UserManager1", "bookstore.UserManagerAgent");
+				jFrame.dispose();
+				}
 		});
 		navbar.add(Logout);
 		
@@ -496,147 +477,7 @@ public class LibrarianHome extends JFrame {
 		
 		contentPane.add(container);
 		
-		JPanel librarianPanel = new JPanel();
-		container.add(librarianPanel, "librarianPanel");
-		
-		JLabel lblNewLabel = new JLabel("ISBN");
-		
-		ISBNText = new JTextField();
-		ISBNText.setColumns(10);
-		
-		JLabel lblNewLabel_1 = new JLabel("Name");
-		
-		nameText = new JTextField();
-		nameText.setColumns(10);
-		
-		JLabel lblNewLabel_2 = new JLabel("Author");
-		
-		authorText = new JTextField();
-		authorText.setColumns(10);
-		
-		JLabel lblNewLabel_3 = new JLabel("Description");
-		
-		descriptionText = new JTextField();
-		descriptionText.setColumns(10);
-		
-		JLabel lblNewLabel_4 = new JLabel("Genere");
-		
-		genereText = new JTextField();
-		genereText.setColumns(10);
-		
-		JLabel lblNewLabel_5 = new JLabel("Publication");
-		
-		publicationText = new JTextField();
-		publicationText.setColumns(10);
-		
-		JLabel lblNewLabel_6 = new JLabel("Quantity");
-		
-		quantityText = new JTextField();
-		quantityText.setColumns(10);
-		
-		JLabel lblNewLabel_7 = new JLabel("Price");
-		
-		priceText = new JTextField();
-		priceText.setColumns(10);
-		
-		JButton btnNewButton = new JButton("ADD");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Book newBook=new Book();
-				newBook.setAuthor(authorText.getText());
-				newBook.setDescription(descriptionText.getText());
-				newBook.setGenre(genereText.getText());
-				newBook.setISBN(ISBNText.getText());
-				newBook.setPrice(priceText.getText());
-				newBook.setPublication(publicationText.getText());
-				newBook.setQuantity(quantityText.getText());
-				newBook.setTitle(nameText.getText());
-				newBook.save();
-				JOptionPane.showMessageDialog(null, "Book added sucessfully."); 
-			}
-		});
-		GroupLayout gl_librarianPanel = new GroupLayout(librarianPanel);
-		gl_librarianPanel.setHorizontalGroup(
-			gl_librarianPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_librarianPanel.createSequentialGroup()
-					.addGap(221)
-					.addGroup(gl_librarianPanel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_librarianPanel.createSequentialGroup()
-							.addComponent(lblNewLabel_7, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-							.addContainerGap())
-						.addGroup(Alignment.TRAILING, gl_librarianPanel.createSequentialGroup()
-							.addGroup(gl_librarianPanel.createParallelGroup(Alignment.TRAILING)
-								.addComponent(priceText, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-								.addComponent(quantityText, Alignment.LEADING, 150, 150, Short.MAX_VALUE)
-								.addGroup(Alignment.LEADING, gl_librarianPanel.createSequentialGroup()
-									.addComponent(lblNewLabel_6, GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
-									.addGap(51))
-								.addComponent(publicationText, Alignment.LEADING, 150, 150, Short.MAX_VALUE)
-								.addComponent(genereText, Alignment.LEADING, 150, 150, Short.MAX_VALUE)
-								.addGroup(Alignment.LEADING, gl_librarianPanel.createSequentialGroup()
-									.addComponent(lblNewLabel_4, GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
-									.addGap(51))
-								.addComponent(descriptionText, Alignment.LEADING, 150, 150, Short.MAX_VALUE)
-								.addComponent(authorText, Alignment.LEADING, 150, 150, Short.MAX_VALUE)
-								.addGroup(Alignment.LEADING, gl_librarianPanel.createSequentialGroup()
-									.addComponent(lblNewLabel_2, GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
-									.addGap(51))
-								.addComponent(nameText, Alignment.LEADING, 150, 150, Short.MAX_VALUE)
-								.addGroup(Alignment.LEADING, gl_librarianPanel.createSequentialGroup()
-									.addComponent(lblNewLabel_1, GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
-									.addGap(51))
-								.addGroup(Alignment.LEADING, gl_librarianPanel.createSequentialGroup()
-									.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
-									.addGap(51))
-								.addComponent(lblNewLabel_3, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblNewLabel_5, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
-								.addComponent(ISBNText, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
-							.addGap(205))))
-				.addGroup(Alignment.TRAILING, gl_librarianPanel.createSequentialGroup()
-					.addGap(274)
-					.addComponent(btnNewButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(251))
-		);
-		gl_librarianPanel.setVerticalGroup(
-			gl_librarianPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_librarianPanel.createSequentialGroup()
-					.addGap(41)
-					.addComponent(lblNewLabel)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(ISBNText, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(22)
-					.addComponent(lblNewLabel_1)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(nameText, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(lblNewLabel_2)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(authorText, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(lblNewLabel_3)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(descriptionText, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(lblNewLabel_4)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(genereText, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(lblNewLabel_5)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(publicationText, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(lblNewLabel_6)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(quantityText, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(lblNewLabel_7)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(priceText, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(btnNewButton)
-					.addContainerGap(15, Short.MAX_VALUE))
-		);
-		librarianPanel.setLayout(gl_librarianPanel);
+
 		
 		JPanel paymentPanel = new JPanel();
 		paymentPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -732,6 +573,10 @@ public class LibrarianHome extends JFrame {
 		
 		
 	}
+	
+	  public void addBooktoList() {
+		  table.setModel(searchAgent.getbooks());
+	    }
 
 	public void populateDetailsPane(String ISBN) {
 		Book book=searchAgent.getBookFromISBN(ISBN);
