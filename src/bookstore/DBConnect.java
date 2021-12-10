@@ -1,10 +1,14 @@
 package bookstore;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class DBConnect {
 	private String USERNAME="root";
 	private String PASSWORD="";
-	private String DBNAME="bookstore";	
+	private String DBNAME="new_bookstore";	
 	static Connection con;
 	DBConnect() {
 		try {
@@ -49,7 +53,7 @@ public class DBConnect {
 			e1.printStackTrace();
 		}
 		try {
-			if(rscheck.next()!=false || rscheck != null) {
+			if(rscheck.next()==false && rscheck != null) {
 				String st = ("INSERT INTO users (name,password,user_role,email,phone_number,address,feedback) values ('"+userName+"','"+password+"','"+userrole+"','"+email+"','"+phone+"','"+address+"', '')");
 				try {
 					rs=stmt.executeUpdate(st);
@@ -70,33 +74,54 @@ public class DBConnect {
 		}
 		 
 	}
-	public static void main(String[] args) throws SQLException {
-		// TODO Auto-generated method stub
+//	public static void main(String[] args) throws SQLException {
+//		// TODO Auto-generated method stub
+//		DBConnect db=new DBConnect();
+//		Statement stmt=db.con.createStatement();
+//		
+//		ResultSet rs=stmt.executeQuery("select 10+1;"
+//				+ "");  
+//		while(rs.next())  
+//		System.out.println(rs.getInt(1)+"  ");  
+//		
+//	}
+	public Map<String, String> loginuser(String email,String password) throws SQLException {
 		DBConnect db=new DBConnect();
-		Statement stmt=db.con.createStatement();
+		Statement stmt = null;
+		ResultSet rscheck = null;
+		Map<String, String> user_data = new HashMap<String, String>();
 		
-		ResultSet rs=stmt.executeQuery("select 10+1;"
-				+ "");  
-		while(rs.next())  
-		System.out.println(rs.getInt(1)+"  ");  
-		
+		stmt = db.con.createStatement();
+		String stcheck = "SELECT * FROM users where email='"+email+"' AND password='"+password+"'";
+		System.out.print(stcheck);
+		rscheck = stmt.executeQuery(stcheck);
+		System.out.print(rscheck);
+		if(rscheck.next()!=false && rscheck != null) {
+//			System.out.print("in if");
+			user_data.put("name", rscheck.getString("name"));
+			user_data.put("user_role", rscheck.getString("user_role"));
+			user_data.put("user_id", rscheck.getString("user_id"));
+		}
+		else {
+			user_data = null;
+		}
+		return user_data;
 	}
-	public String loginuser(String email,String password) throws SQLException {
+	public String getUserRole(String email,String password) throws SQLException {
 		DBConnect db=new DBConnect();
 		Statement stmt = null;
 		ResultSet rscheck = null;
 		stmt = db.con.createStatement();
-		String stcheck = "SELECT name FROM users where email='"+email+"' AND password='"+password+"'";
+		String stcheck = "SELECT user_role FROM users where email='"+email+"' AND password='"+password+"'";
 		System.out.print(stcheck);
 		rscheck = stmt.executeQuery(stcheck);
 		System.out.print(rscheck);
-		db.closeConnection();
-		if(rscheck.next()!=false || rscheck != null) {
-//			System.out.print("in if");
-			return rscheck.getString("name");
+		if(rscheck.next()!=false && rscheck != null) {
+			System.out.print("in if");
+			return rscheck.getString("user_role");
 			
 		}else {
-//			System.out.print("in else");
+			System.out.print("in else");
 			return "false";
 		}
 		
@@ -109,59 +134,157 @@ public class DBConnect {
         return rs;
 
 	}
-	public ResultSet getbooksbyattribute(String name, String value) throws SQLException{
+	public ResultSet searchBooks(String keyword) throws SQLException{
 		DBConnect db=new DBConnect(); //connect to database
-        String sql="select * from books where "+name+"='"+value+"'"; //select all books
+        String sql="SELECT *  FROM `books` WHERE `isbn` LIKE '%"+keyword+"%' OR `name` LIKE '%"+keyword+"%' OR `author` LIKE '%"+keyword+"%' OR `description` LIKE '%"+keyword+"%' OR `genre` LIKE '%"+keyword+"%' OR `publication` LIKE '%"+keyword+"%'"; //select all books
         Statement stmt = db.con.createStatement();
         ResultSet rs=stmt.executeQuery(sql);
         return rs;
 
 	}
-	public ResultSet searchbookbykeyword(String keyword) throws SQLException {
+	public ResultSet getbookswithattribute(String genre) throws SQLException{
 		DBConnect db=new DBConnect(); //connect to database
-        String sql="SELECT * FROM books WHERE keywords like '%"+keyword+"%'"; //select all books
+        String sql="select * from books where genre='"+genre+"'"; //select all books
         Statement stmt = db.con.createStatement();
         ResultSet rs=stmt.executeQuery(sql);
         return rs;
-		
+
 	}
-	public String addorder(int uid,int bid,int quantity) throws SQLException {
+	public int saveBook(Book book) throws SQLException{
 		DBConnect db=new DBConnect(); //connect to database
-        String sql="INSERT INTO orders (isbn,user_id,payment_id,status,quantity) VALUES ("+bid+","+uid+",-1,'pending',"+quantity+")"; //select all books
-        Statement stmt = db.con.createStatement();
+        String sql=String.format("INSERT INTO `books`(`isbn`, `name`, `author`, `description`, `genre`, `publication`, `quantity`, `price`) "
+        		+ "VALUES ('%s','%s','%s','%s','%s','%s','%s','%s')",book.ISBN,book.title,book.author,book.description,book.genre,book.publication,book.quantity,book.price);
+        		Statement stmt = db.con.createStatement();
         int rs=stmt.executeUpdate(sql);
-        String sql1 = "SELECT name FROM books where isbn="+bid;
-        ResultSet rs1 = stmt.executeQuery(sql1);
-        System.out.print(rs1);
-        rs1.next();
-        return rs1.getString("name");
-        
-        
+        return rs;
+
 	}
-	public int getlastorderid() throws SQLException {
-		DBConnect db=new DBConnect(); //connect to database
-        String sql="SELECT MAX(order_id) as order_id FROM orders";
+	public Book getBookFromISBN(String ISBN) throws SQLException{
+		DBConnect db=new DBConnect(); 
+		String sql="SELECT *  FROM `books` WHERE `isbn`= "+Integer.parseInt(ISBN);
         Statement stmt = db.con.createStatement();
         ResultSet rs=stmt.executeQuery(sql);
-        rs.next();
-        return rs.getInt("order_id");
+		if(rs.next()!=false && rs != null) {
+	        Book resultBook=new Book();
+	        resultBook.setISBN(rs.getString("isbn"));
+	        resultBook.setTitle(rs.getString("name"));
+	        resultBook.setAuthor(rs.getString("author"));
+	        resultBook.setDescription(rs.getString("description"));
+	        resultBook.setGenre(rs.getString("genre"));
+	        resultBook.setPublication(rs.getString("publication"));
+	        resultBook.setQuantity(rs.getString("quantity"));
+	        resultBook.setPrice(rs.getString("price"));
+	        resultBook.setDateAdded(rs.getString("date_added"));
+	        
+			return resultBook;
+			
+		}else {
+			return new Book();
+		}
+
 	}
-	public int getamountbyisbn(int isbn) throws SQLException {
+	
+	public ResultSet getBookRowFromISBN(String ISBN) throws SQLException {
 		DBConnect db=new DBConnect(); //connect to database
-        String sql="SELECT price FROM books where isbn="+isbn;
+        String sql="select * from books"; //select all books
         Statement stmt = db.con.createStatement();
         ResultSet rs=stmt.executeQuery(sql);
-        rs.next();
-        return rs.getInt("price");
+        return rs;
 	}
-	public int addpayment(int order_id,int amount,String payment_type) throws SQLException {
+	public boolean addBookToCart(String userId,String ISBN) throws SQLException{
 		DBConnect db=new DBConnect(); //connect to database
-        String sql="INSERT INTO payments (order_id,amount,payment_type) VALUES ("+order_id+","+amount+",'"+payment_type+"')"; //select all books
+        String sql="SELECT `quantity` FROM `books` WHERE `isbn`="+ISBN; //validate quantity
         Statement stmt = db.con.createStatement();
-        int rs=stmt.executeUpdate(sql);
-        String sql1 = "SELECT MAX(payment_id) as payment_id FROM payments";
-        ResultSet rs1 = stmt.executeQuery(sql1);
-        rs1.next();
-        return rs1.getInt("payment_id");
+        ResultSet rs=stmt.executeQuery(sql);
+        if(rs.next()!=false) {
+        	if(Integer.parseInt(rs.getString("quantity"))<=0) {
+        		return false;
+        	}
+        }
+        sql=String.format("INSERT INTO `cart`(`cart_id`, `user_id`, `isbn`, `quantity`) "
+        		+ "VALUES (1,'%s','%s',1)",userId,ISBN);
+        stmt = db.con.createStatement();
+        int stat=stmt.executeUpdate(sql);
+        sql=String.format("UPDATE `books` SET `quantity`=`quantity`-1 WHERE `isbn`= %s",ISBN);
+        stmt = db.con.createStatement();
+        stat=stmt.executeUpdate(sql);
+        return true;
+	}
+	public ResultSet getCartItems(String userId) throws SQLException{
+		DBConnect db=new DBConnect(); //connect to database
+        String sql="SELECT cart.isbn as ISBN,books.name as Title,SUM(cart.quantity) as Quantity ,books.price as Price,(books.price*SUM(cart.quantity)) as `Total Item Price` FROM `cart`  INNER join books on books.isbn=cart.isbn  where cart.user_id="+userId+" GROUP by cart.`isbn`"; //validate quantity
+        Statement stmt = db.con.createStatement();
+        ResultSet rs=stmt.executeQuery(sql);
+        return rs;
+	}
+	public float getCartTotal(String userId) throws SQLException{
+		ResultSet rs=getCartItems(userId);
+		float total=0;
+		while(rs.next()) {
+			total+=Float.parseFloat(rs.getString("Total Item Price"));
+		}
+		return total;		
+	}
+	
+	public int payAmount(String userId,String Type) throws SQLException {
+		DBConnect db=new DBConnect(); //connect to database
+		int paymentId=new Random().nextInt(1000000);
+		int orderId=new Random().nextInt(1000000);
+
+        String sql=String.format("INSERT INTO `payments`(`payment_id`, `order_id`, `amount`, `payment_type`) "
+        		+ "VALUES (%s,%s,%s,'%s')",paymentId,orderId,getCartTotal(userId),Type);
+        Statement stmt = db.con.createStatement();
+        int  rs=stmt.executeUpdate(sql);
+        placeOrder(userId, paymentId, orderId);
+        clearCart(userId);
+        return paymentId;
+	}
+	
+	public int placeOrder(String userId,int paymentId,int orderId) throws SQLException {
+		DBConnect db=new DBConnect(); //connect to database
+		ResultSet rs=getCartItems(userId);
+		while(rs.next()) {
+	        String sql=String.format("INSERT INTO `orders`(`order_id`, `isbn`, `user_id`, `payment_id`, `status`, `quantity`) "
+	        		+ "VALUES (%s,%s,%s,%s,'%s',%s)",orderId,rs.getString("ISBN"),userId,paymentId,"sucess",rs.getString("Quantity"));
+	        Statement stmt = db.con.createStatement();
+	        stmt.executeUpdate(sql);
+	        sql=String.format("UPDATE `books` SET `quantity`=`quantity`-"+rs.getString("Quantity")+"  WHERE `isbn`="+rs.getString("ISBN"));
+	        stmt = db.con.createStatement();
+	        stmt.executeUpdate(sql);
+		}
+		return orderId;
+	}
+	public void clearCart(String userId) throws SQLException {
+		DBConnect db=new DBConnect(); //connect to database
+		ResultSet rs=getCartItems(userId);
+
+        String sql="DELETE FROM `cart` WHERE `user_id`="+userId;
+        Statement stmt = db.con.createStatement();
+        stmt.executeUpdate(sql);
+	}
+	
+	public ArrayList<Order> getOrders(String userId) throws SQLException {
+//		SELECT DISTINCT order_id FROM `orders` WHERE 1
+		DBConnect db=new DBConnect(); //connect to database
+        String sql="SELECT distinct order_id FROM `orders` where user_id="+userId; //validate quantity
+        Statement stmt = db.con.createStatement();
+        ResultSet rs=stmt.executeQuery(sql);
+        ArrayList<Order> orders=new ArrayList<Order>();
+		while(rs.next()) {
+	        String subSql="SELECT *,orders.quantity as orderedQty FROM `orders`inner join books on books.isbn=orders.isbn where order_id="+rs.getString("order_id"); //validate quantity
+	        Statement subStmt = db.con.createStatement();
+	        ResultSet subres=subStmt.executeQuery(subSql);			
+			Order order=new Order();
+			while(subres.next()) {
+				order.orderId=subres.getString("order_id");
+				order.status=subres.getString("status");
+				order.paymentId=subres.getString("payment_id");
+				order.userId=userId;
+				order.orderitems.add(new OrderItem(subres.getString("name"),subres.getInt("orderedQty"),subres.getInt("price")));
+				
+			}
+			orders.add(order);
+		}
+        return orders;
 	}
 }
