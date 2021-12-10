@@ -12,6 +12,7 @@ import jade.lang.acl.ACLMessage;
  public class CustomerAgent extends MainAgent
  {   static int len = 1;
  	 String userID;
+ 	 CustomerHome ch;
 	 public CustomerAgent() {
 //		 userID = user_id;
 		 System.out.println("in customeragent");
@@ -19,15 +20,27 @@ import jade.lang.acl.ACLMessage;
      protected void setup() 
      {
     	 System.out.println("Customer-agent " + getAID().getName() + "is ready.");
+    	 registerService("book-buying");
     	 Object[] args = getArguments();
     	 userID = (String)args[0]; 
-    	 new CustomerHome(this,userID);
+    	 ch = new CustomerHome(this,userID);
 
-         addBehaviour(new TickerBehaviour(this, Long.valueOf(10000)) {
-             protected void onTick() {
-                 System.out.println("customer-agent " + getAID().getName() + "is cycling.");
-             }
-         });
+    	 addBehaviour(new CyclicBehaviour() {
+             public void action() {
+                 ACLMessage msg, reply = null;
+
+                 msg = myAgent.receive();
+
+                 if (msg != null) {
+                	 String content = msg.getContent();
+                	 System.out.print(content);
+                	 if (msg.getConversationId() == Constants.ADD_BOOKS){
+                		 ch.addBooktoListcustomer();
+                	 }
+                 }
+               }
+                 
+     });
      }   //  --- setup ---
     
 

@@ -27,6 +27,8 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Set;
+
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -118,7 +120,13 @@ public class BookAdding extends JFrame {
 				newBook.save();
 				JOptionPane.showMessageDialog(null, "Book added sucessfully.");
 				BookAddingAgent.sendmessage("New Book Added!!",new AID("Librarian:asd", AID.ISLOCALNAME),BookAddingAgent,Constants.ADD_BOOKS);
-				
+				Set<AID> Aids = BookAddingAgent.searchService("book-buying");
+				System.out.print(BookAddingAgent.searchService("book-buying"));
+				for(AID aid: Aids) {
+					BookAddingAgent.sendmessage("New Book Added!!",aid,BookAddingAgent,Constants.ADD_BOOKS);
+					
+				}
+				jFrame.dispose();
 			}
 		});
 		GroupLayout gl_librarianPanel = new GroupLayout(librarianPanel);

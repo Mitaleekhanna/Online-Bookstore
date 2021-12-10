@@ -14,52 +14,51 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MainAgent extends Agent {
-    protected Set<AID> searchForService(String serviceName) {
+    protected Set<AID> searchService(String serviceName) {
         System.out.println("Main agent launched");
-        Set<AID> foundAgents = new HashSet<>();
+        Set<AID> agents = new HashSet<>();
         DFAgentDescription dfd = new DFAgentDescription();
         ServiceDescription sd = new ServiceDescription();
         sd.setType(serviceName.toLowerCase());
         dfd.addServices(sd);
 
-        SearchConstraints sc = new SearchConstraints();
-        sc.setMaxResults(Long.valueOf(-1));
+        SearchConstraints st = new SearchConstraints();
+        st.setMaxResults(Long.valueOf(-1));
 
         try {
-            DFAgentDescription[] results = DFService.search(this, dfd, sc);
+            DFAgentDescription[] results = DFService.search(this, dfd, st);
             for (DFAgentDescription result : results) {
-                foundAgents.add(result.getName());
+                agents.add(result.getName());
             }
-            return foundAgents;
+            return agents;
         } catch (FIPAException ex) {
             ex.printStackTrace();
             return null;
         }
     }
 
-    protected void deregister() {
-        System.out.println("Taking down" + getLocalName());
-        try {
-            DFService.deregister(this);
-        } catch (Exception ex) {
-        }
-    }
+    protected void deregister() throws FIPAException {
+        System.out.println("Deregistering" + getLocalName());
+        DFService.deregister(this);
+       }
 
 
-    protected void register(String serviceName) {
-        DFAgentDescription dfd = new DFAgentDescription();
-        dfd.setName(getAID());
+    protected void registerService(String serviceName) {
+        DFAgentDescription ad = new DFAgentDescription();
+        ad.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
         sd.setName(getLocalName());
         sd.setType(serviceName.toLowerCase());
-        dfd.addServices(sd);
+        ad.addServices(sd);
         try {
-            DFService.register(this, dfd);
+            DFService.register(this, ad);
+           
         } catch (FIPAException ex) {
             ex.printStackTrace();
         }
     }
-
+    
+   
     protected void createAgent(String name, String className) {
         AID agentID = new AID(name, AID.ISLOCALNAME);
         AgentContainer controller = getContainerController();
