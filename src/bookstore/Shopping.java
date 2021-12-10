@@ -101,10 +101,15 @@ public class Shopping extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 600);
 		JPanel container = new JPanel();
+		JPanel shoppingPanel = new JPanel();
 		container.setLayout(new CardLayout(0, 0));
 		JPanel orderPanel = new JPanel();
 		JPanel profilePanel = new JPanel();
-		container.add(profilePanel, "profilePanel");
+		shoppingPanel.add(profilePanel, "profilePanel");
+		JLabel orderItemsLabel = new JLabel("Ordered items");
+		orderItemsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		orderItemsLabel.setAlignmentY(0.0f);
+		shoppingPanel.add(orderItemsLabel,"orderItemsLabel");
 		orderSet = new JPanel();
 		orderSet.removeAll();
 		for(Order order:shoppingAgent.getOrders(userId)) {
@@ -112,6 +117,8 @@ public class Shopping extends JFrame {
 		}
 		profilePanel.add(orderSet);
 		orderSet.setLayout(new BoxLayout(orderSet, BoxLayout.Y_AXIS));
+		shoppingPanel.add(profilePanel,"profilePanel");
+		container.add(shoppingPanel);
 		this.jFrame.add(container);
 		this.jFrame.setVisible(true);
 		
