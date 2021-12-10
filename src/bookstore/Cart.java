@@ -21,6 +21,7 @@ import javax.swing.BoxLayout;
 import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.GroupLayout;
@@ -58,7 +59,7 @@ public class Cart extends JFrame {
 	private JTextField quantityText;
 	private JTextField priceText;
 	private JButton AddBooks;
-	private SearchAgent searchAgent=new SearchAgent();
+//	private SearchAgent searchAgent=new SearchAgent();
 	private ShoppingAgent shoppingAgent=new ShoppingAgent();
 	
 	//deatils labels
@@ -85,8 +86,8 @@ public class Cart extends JFrame {
 
 
 
-	public Cart(CartAgent CartAgent,String userId) {
-		
+	public Cart(CartAgent CartAgent,String userId,TableModel tb,Float amount) {
+//		updateCart();
 		this.jFrame = new JFrame();
 		 this.jFrame.addWindowListener(new java.awt.event.WindowAdapter() {
 	            @Override
@@ -98,18 +99,11 @@ public class Cart extends JFrame {
 		this.jFrame.setSize(400, 400);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 600);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(panel_1);
 		JPanel container = new JPanel();
-
 		container.setLayout(new CardLayout(0, 0));
-		
-
-
-		
-		
 		JPanel cartPanel = new JPanel();
 		container.add(cartPanel, "cartPanel");
 		cartPanel.setLayout(new BoxLayout(cartPanel, BoxLayout.Y_AXIS));
@@ -130,22 +124,21 @@ public class Cart extends JFrame {
 		
 		cartItemsTable = new JTable();
 		scrollPane_1.setViewportView(cartItemsTable);
-		System.out.print(shoppingAgent.getCartItems(userId));
-		cartItemsTable.setModel(shoppingAgent.getCartItems(userId));
-		System.out.print(shoppingAgent.getCartTotal(userId));
-		totalAmount.setText("Total amount payable: $"+String.valueOf(shoppingAgent.getCartTotal(userId)));
-		if(shoppingAgent.getCartItems(userId).getRowCount()<=0) {
+//		w	System.out.print(tb);
+		cartItemsTable.setModel(tb);
+		System.out.print(amount);
+		totalAmount = new JLabel("New label");
+		totalAmount.setText("Total amount payable: $"+String.valueOf(amount));
+		payButton = new JButton("Pay");
+		if(CartAgent.getCartItems(userId).getRowCount()<=0) {
 			payButton.setVisible(false);
 		}else {
 			payButton.setVisible(true);
 		}
 		
-		JPanel panel_1 = new JPanel();
+		
 		cartPanel.add(panel_1);
 		panel_1.setLayout(new BoxLayout(panel_1, BoxLayout.X_AXIS));
-		
-		totalAmount = new JLabel("New label");
-		
 		panel_1.add(totalAmount);
 		
 		payButton = new JButton("Pay");
@@ -157,13 +150,6 @@ public class Cart extends JFrame {
 		});
 		panel_1.add(payButton);
 		
-	
-		
-		
-		
-		
-		
-		
 		JPanel paymentPanel = new JPanel();
 		paymentPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		container.add(paymentPanel, "paymentPanel");
@@ -174,13 +160,17 @@ public class Cart extends JFrame {
 		creditButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Order placed successfully! reference #"+shoppingAgent.placeOrder(userId, "credit"));
-				table.setModel(searchAgent.getbooks());
-				cartItemsTable.setModel(shoppingAgent.getCartItems(userId));
-				if(shoppingAgent.getCartItems(userId).getRowCount()<=0) {
-					payButton.setVisible(false);
-				}else {
-					payButton.setVisible(true);
-				}
+				CartAgent.killAgent(CartAgent.getLocalName());
+				Object[] args = new Object[1];
+     			args[0] = userId;
+//     			CartAgent.createAgentwithArgs("ShoppingAgent", "bookstore.ShoppingAgent",args);
+//				table.setModel(searchAgent.getbooks());
+//				cartItemsTable.setModel(shoppingAgent.getCartItems(userId));
+//				if(CartAgent.getCartItems(userId).getRowCount()<=0) {
+//					payButton.setVisible(false);
+//				}else {
+//					payButton.setVisible(true);
+//				}
 			}
 		});
 		creditButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -189,8 +179,9 @@ public class Cart extends JFrame {
 		debitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Order placed successfully! reference #"+shoppingAgent.placeOrder(userId, "debit"));
-				table.setModel(searchAgent.getbooks());
-				updateCart();
+				CartAgent.killAgent(CartAgent.getLocalName());
+//				table.setModel(searchAgent.getbooks());
+//				updateCart();
 			}
 		});
 		debitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -223,7 +214,7 @@ public class Cart extends JFrame {
 					.addGap(466))
 		);
 		paymentPanel.setLayout(gl_paymentPanel);
-		this.jFrame.add(contentPane);
+		this.jFrame.add(container);
 		this.jFrame.setVisible(true);
 		JPanel NamePanel = new JPanel();
 		JLabel nameLabel = new JLabel("n");
@@ -232,30 +223,30 @@ public class Cart extends JFrame {
 		
 	}
 
-	public void populateDetailsPane(String ISBN) {
-		Book book=searchAgent.getBookFromISBN(ISBN);
-		detailsAuthor.setText(book.getAuthor());
-		detailsGenre.setText(book.getGenre());
-		detailsISBN.setText(book.getISBN());
-		detailsTitle.setText(book.getTitle());
-		detailsDescription.setText(book.getDescription());
-		detailsPublication.setText(book.getPublication());
-		detailsQuantity.setText(book.getQuantity());
-		detailsPrice.setText(book.getPrice());
-		detailsDateAdded.setText(book.getDateAdded());
-		
-	}
+//	public void populateDetailsPane(String ISBN) {
+//		Book book=searchAgent.getBookFromISBN(ISBN);
+//		detailsAuthor.setText(book.getAuthor());
+//		detailsGenre.setText(book.getGenre());
+//		detailsISBN.setText(book.getISBN());
+//		detailsTitle.setText(book.getTitle());
+//		detailsDescription.setText(book.getDescription());
+//		detailsPublication.setText(book.getPublication());
+//		detailsQuantity.setText(book.getQuantity());
+//		detailsPrice.setText(book.getPrice());
+//		detailsDateAdded.setText(book.getDateAdded());
+//		
+//	}
 	
-	public void updateCart() {
-		cartItemsTable.setModel(shoppingAgent.getCartItems(userId));
-		totalAmount.setText("Total amount payable: $"+String.valueOf(shoppingAgent.getCartTotal(userId)));
-		if(shoppingAgent.getCartItems(userId).getRowCount()<=0) {
-			payButton.setVisible(false);
-		}else {
-			payButton.setVisible(true);
-		}
-		
-	}
+//	public void updateCart() {
+//		cartItemsTable.setModel(shoppingAgent.getCartItems(userId));
+//		totalAmount.setText("Total amount payable: $"+String.valueOf(shoppingAgent.getCartTotal(userId)));
+//		if(shoppingAgent.getCartItems(userId).getRowCount()<=0) {
+//			payButton.setVisible(false);
+//		}else {
+//			payButton.setVisible(true);
+//		}
+//		
+//	}
 	public void addOrder(JPanel orderSet,Order orderObj) {
 		JPanel order = new JPanel();
 		orderSet.add(order);

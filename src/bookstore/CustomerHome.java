@@ -299,7 +299,7 @@ public class CustomerHome extends JFrame {
 			
 					JOptionPane.showMessageDialog(null, "Error adding book to the cart"); 
 				}
-				updateCart();
+//				updateCart();
 			}
 		});
 		addTocart.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -308,7 +308,7 @@ public class CustomerHome extends JFrame {
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CardLayout cl = (CardLayout)(container.getLayout());
-			    cl.show(container, "searchPanel");
+			    cl.show(container, "homePanel");
 			}
 		});
 		GroupLayout gl_detailsPanel = new GroupLayout(detailsPanel);
@@ -470,7 +470,7 @@ public class CustomerHome extends JFrame {
 //			    cl.show(container, "cartPanel");
 				 Object[] args = new Object[1];
      			 args[0] = userId;
-     			CustomerAgent.createAgentwithArgs("CartAgent", "bookstore.CartAgent",args);
+     			 CustomerAgent.createAgentwithArgs("CartAgent", "bookstore.CartAgent",args);
 				
 			}
 		});
@@ -480,12 +480,16 @@ public class CustomerHome extends JFrame {
 
 	
 		
-		JButton Profile = new JButton("Profile");
+		JButton Profile = new JButton("Orders");
 		Profile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateProfile(orderSet);
-				CardLayout cl = (CardLayout)(container.getLayout());
-			    cl.show(container, "profilePanel");
+//				updateProfile(orderSet);
+//				CardLayout cl = (CardLayout)(container.getLayout());
+//			    cl.show(container, "profilePanel");
+				 Object[] args = new Object[1];
+     			 args[0] = userId;
+     			 CustomerAgent.createAgentwithArgs("ShoppingAgent", "bookstore.ShoppingAgent",args);
+				
 			}
 		});
 		navbar.add(Profile);
@@ -649,66 +653,66 @@ public class CustomerHome extends JFrame {
 					.addContainerGap(15, Short.MAX_VALUE))
 		);
 		librarianPanel.setLayout(gl_librarianPanel);
-		
-		JPanel paymentPanel = new JPanel();
-		paymentPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		container.add(paymentPanel, "paymentPanel");
-
-		JLabel lblChooseYourPayment = new JLabel("Choose your payment method");
-		
-		JButton creditButton = new JButton("Credit card");
-		creditButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Order placed successfully! reference #"+shoppingAgent.placeOrder(userId, "credit"));
-				table.setModel(searchAgent.getbooks());
-				cartItemsTable.setModel(shoppingAgent.getCartItems(userId));
-				if(shoppingAgent.getCartItems(userId).getRowCount()<=0) {
-					payButton.setVisible(false);
-				}else {
-					payButton.setVisible(true);
-				}
-			}
-		});
-		creditButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		
-		JButton debitButton = new JButton("Debit");
-		debitButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Order placed successfully! reference #"+shoppingAgent.placeOrder(userId, "debit"));
-				table.setModel(searchAgent.getbooks());
-				updateCart();
-			}
-		});
-		debitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		GroupLayout gl_paymentPanel = new GroupLayout(paymentPanel);
-		gl_paymentPanel.setHorizontalGroup(
-			gl_paymentPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_paymentPanel.createSequentialGroup()
-					.addGap(217)
-					.addComponent(lblChooseYourPayment, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(222))
-				.addGroup(Alignment.TRAILING, gl_paymentPanel.createSequentialGroup()
-					.addGroup(gl_paymentPanel.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_paymentPanel.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(creditButton))
-						.addGroup(gl_paymentPanel.createSequentialGroup()
-							.addGap(246)
-							.addComponent(debitButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-					.addGap(245))
-		);
-		gl_paymentPanel.setVerticalGroup(
-			gl_paymentPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_paymentPanel.createSequentialGroup()
-					.addGap(7)
-					.addComponent(lblChooseYourPayment)
-					.addGap(18)
-					.addComponent(creditButton)
-					.addGap(18)
-					.addComponent(debitButton)
-					.addGap(466))
-		);
-		paymentPanel.setLayout(gl_paymentPanel);
+//		
+//		JPanel paymentPanel = new JPanel();
+//		paymentPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+//		container.add(paymentPanel, "paymentPanel");
+//
+//		JLabel lblChooseYourPayment = new JLabel("Choose your payment method");
+//		
+//		JButton creditButton = new JButton("Credit card");
+//		creditButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				JOptionPane.showMessageDialog(null, "Order placed successfully! reference #"+shoppingAgent.placeOrder(userId, "credit"));
+//				table.setModel(searchAgent.getbooks());
+//				cartItemsTable.setModel(shoppingAgent.getCartItems(userId));
+//				if(shoppingAgent.getCartItems(userId).getRowCount()<=0) {
+//					payButton.setVisible(false);
+//				}else {
+//					payButton.setVisible(true);
+//				}
+//			}
+//		});
+//		creditButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+//		
+//		JButton debitButton = new JButton("Debit");
+//		debitButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				JOptionPane.showMessageDialog(null, "Order placed successfully! reference #"+shoppingAgent.placeOrder(userId, "debit"));
+//				table.setModel(searchAgent.getbooks());
+//				updateCart();
+//			}
+//		});
+//		debitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+//		GroupLayout gl_paymentPanel = new GroupLayout(paymentPanel);
+//		gl_paymentPanel.setHorizontalGroup(
+//			gl_paymentPanel.createParallelGroup(Alignment.LEADING)
+//				.addGroup(gl_paymentPanel.createSequentialGroup()
+//					.addGap(217)
+//					.addComponent(lblChooseYourPayment, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//					.addGap(222))
+//				.addGroup(Alignment.TRAILING, gl_paymentPanel.createSequentialGroup()
+//					.addGroup(gl_paymentPanel.createParallelGroup(Alignment.TRAILING)
+//						.addGroup(gl_paymentPanel.createSequentialGroup()
+//							.addContainerGap()
+//							.addComponent(creditButton))
+//						.addGroup(gl_paymentPanel.createSequentialGroup()
+//							.addGap(246)
+//							.addComponent(debitButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+//					.addGap(245))
+//		);
+//		gl_paymentPanel.setVerticalGroup(
+//			gl_paymentPanel.createParallelGroup(Alignment.LEADING)
+//				.addGroup(gl_paymentPanel.createSequentialGroup()
+//					.addGap(7)
+//					.addComponent(lblChooseYourPayment)
+//					.addGap(18)
+//					.addComponent(creditButton)
+//					.addGap(18)
+//					.addComponent(debitButton)
+//					.addGap(466))
+//		);
+//		paymentPanel.setLayout(gl_paymentPanel);
 		
 
 		
@@ -759,16 +763,16 @@ public class CustomerHome extends JFrame {
 		
 	}
 	
-	public void updateCart() {
-		cartItemsTable.setModel(shoppingAgent.getCartItems(userId));
-		totalAmount.setText("Total amount payable: $"+String.valueOf(shoppingAgent.getCartTotal(userId)));
-		if(shoppingAgent.getCartItems(userId).getRowCount()<=0) {
-			payButton.setVisible(false);
-		}else {
-			payButton.setVisible(true);
-		}
-		
-	}
+//	public void updateCart() {
+//		cartItemsTable.setModel(shoppingAgent.getCartItems(userId));
+//		totalAmount.setText("Total amount payable: $"+String.valueOf(shoppingAgent.getCartTotal(userId)));
+//		if(shoppingAgent.getCartItems(userId).getRowCount()<=0) {
+//			payButton.setVisible(false);
+//		}else {
+//			payButton.setVisible(true);
+//		}
+//		
+//	}
 	public void addOrder(JPanel orderSet,Order orderObj) {
 		JPanel order = new JPanel();
 		orderSet.add(order);
