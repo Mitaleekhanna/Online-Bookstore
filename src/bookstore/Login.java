@@ -131,16 +131,19 @@ public class Login extends JFrame {
 		gbc_btnNewButton.gridy = 3;
 		panel1.add(btnNewButton, gbc_btnNewButton);
 		
-		/*
-		 * registerLabel = new JLabel("Register"); registerLabel.addMouseListener(new
-		 * MouseAdapter() {
-		 * 
-		 * @Override public void mouseClicked(MouseEvent e) { JFrame register = new
-		 * Register(); register.setVisible(true); dispose(); } });
-		 * registerLabel.setFont(new Font("Tahoma", Font.PLAIN, 10)); GridBagConstraints
-		 * gbc_registerLabel = new GridBagConstraints(); gbc_registerLabel.gridx = 2;
-		 * gbc_registerLabel.gridy = 4; panel1.add(registerLabel, gbc_registerLabel);
-		 */
+		
+		registerLabel = new JLabel("Register"); 
+		registerLabel.addMouseListener(new MouseAdapter() {
+		@Override public void mouseClicked(MouseEvent e) { 
+			JFrame register = new Register(UserManagerAgent); 
+//			register.setVisible(true); 
+//			dispose(); 
+			} 
+		});
+		 registerLabel.setFont(new Font("Tahoma", Font.PLAIN, 10)); GridBagConstraints
+		 gbc_registerLabel = new GridBagConstraints(); gbc_registerLabel.gridx = 2;
+		 gbc_registerLabel.gridy = 4; panel1.add(registerLabel, gbc_registerLabel);
+		
 //		getContentPane().add(panel1);
 //		panel1.setVisible(true);
 		this.jFrame.add(panel1);

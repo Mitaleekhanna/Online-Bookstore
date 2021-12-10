@@ -216,8 +216,8 @@ public class Cart extends JFrame {
 		paymentPanel.setLayout(gl_paymentPanel);
 		this.jFrame.add(container);
 		this.jFrame.setVisible(true);
-		JPanel NamePanel = new JPanel();
-		JLabel nameLabel = new JLabel("n");
+//		JPanel NamePanel = new JPanel();
+//		JLabel nameLabel = new JLabel("n");
 
 		
 		
