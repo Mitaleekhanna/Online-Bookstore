@@ -3,6 +3,8 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.AgentContainer;
@@ -60,6 +62,9 @@ import jade.lang.acl.ACLMessage;
      		}
      		System.out.println(user_data.get("name") +" Logged in Successfully.");
      	}
+     	 else {
+     		JOptionPane.showMessageDialog(null, "Invalid Username or Password"); 
+     	 }
 }
      public String getUserRole(String email,String password) throws Exception {
     	 DBConnect db = new DBConnect();

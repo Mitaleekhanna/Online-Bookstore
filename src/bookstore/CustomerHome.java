@@ -1,5 +1,3 @@
-//Customer GUI Page
-
 package bookstore;
 
 import java.awt.BorderLayout;
@@ -31,6 +29,9 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 //import com.jgoodies.forms.layout.FormLayout;
 //import com.jgoodies.forms.layout.ColumnSpec;
 //import com.jgoodies.forms.layout.RowSpec;
+
+import jade.domain.FIPAException;
+
 //import com.jgoodies.forms.layout.FormSpecs;
 import java.awt.FlowLayout;
 import java.awt.Insets;
@@ -63,7 +64,7 @@ public class CustomerHome extends JFrame {
 	private SearchAgent searchAgent=new SearchAgent();
 	private ShoppingAgent shoppingAgent=new ShoppingAgent();
 	
-	//details labels
+	//deatils labels
 	JLabel detailsGenre;
 	JLabel detailsISBN;
 	JLabel detailsTitle;
@@ -113,6 +114,12 @@ public class CustomerHome extends JFrame {
 	            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 	                super.windowClosing(windowEvent);
 	                CustomerAgent.killAgent(CustomerAgent.getLocalName());
+	                try {
+						CustomerAgent.deregister();
+					} catch (FIPAException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 	            }
 	        });
 		this.jFrame.setSize(400, 400);
@@ -214,7 +221,8 @@ public class CustomerHome extends JFrame {
 		
 		JPanel detailsPanel = new JPanel();
 		container.add(detailsPanel, "detailsPanel");
-		
+		JScrollPane scrollPane1 = new JScrollPane();
+		detailsPanel.add(scrollPane1);
 		JLabel lblNewLabel_8 = new JLabel("Book Details");
 		lblNewLabel_8.setFont(new Font("Tahoma", Font.BOLD, 20));
 		
@@ -503,6 +511,12 @@ public class CustomerHome extends JFrame {
 //				login.setVisible(true);
 //				dispose();
 				CustomerAgent.killAgent(CustomerAgent.getLocalName());
+				try {
+					CustomerAgent.deregister();
+				} catch (FIPAException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				CustomerAgent.createAgent("UserManager1", "bookstore.UserManagerAgent");
 				jFrame.dispose();
 
@@ -799,4 +813,7 @@ public class CustomerHome extends JFrame {
 			addOrder(orderSet,order);
 		}
 	}
+	 public void addBooktoListcustomer() {
+		  table.setModel(searchAgent.getbooks());
+	    }
 }

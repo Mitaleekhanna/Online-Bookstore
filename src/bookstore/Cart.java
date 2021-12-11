@@ -162,8 +162,9 @@ public class Cart extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Order placed successfully! reference #"+shoppingAgent.placeOrder(userId, "credit"));
 				CartAgent.killAgent(CartAgent.getLocalName());
-				Object[] args = new Object[1];
-     			args[0] = userId;
+//				Object[] args = new Object[1];
+//     			args[0] = userId;
+     			jFrame.dispose();
 //     			CartAgent.createAgentwithArgs("ShoppingAgent", "bookstore.ShoppingAgent",args);
 //				table.setModel(searchAgent.getbooks());
 //				cartItemsTable.setModel(shoppingAgent.getCartItems(userId));
@@ -176,12 +177,13 @@ public class Cart extends JFrame {
 		});
 		creditButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-		JButton debitButton = new JButton("Debit");
+		JButton debitButton = new JButton("Debit Card");
 	
 		debitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Order placed successfully! reference #"+shoppingAgent.placeOrder(userId, "debit"));
 				CartAgent.killAgent(CartAgent.getLocalName());
+				jFrame.dispose();
 //				table.setModel(searchAgent.getbooks());
 //				updateCart();
 			}
