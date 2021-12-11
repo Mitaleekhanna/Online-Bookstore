@@ -467,7 +467,7 @@ public class LibrarianHome extends JFrame {
 		Logout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				LibrarianAgent.killAgent(LibrarianAgent.getLocalName());
-				LibrarianAgent.createAgent("UserManager1", "bookstore.UserManagerAgent");
+//				LibrarianAgent.createAgent("UserManager2", "bookstore.UserManagerAgent");
 				jFrame.dispose();
 				}
 		});

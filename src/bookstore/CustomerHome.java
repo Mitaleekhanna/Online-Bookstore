@@ -511,8 +511,7 @@ public class CustomerHome extends JFrame {
 //				dispose();
 				CustomerAgent.deregister();
 				CustomerAgent.killAgent(CustomerAgent.getLocalName());
-				
-				CustomerAgent.createAgent("UserManager1", "bookstore.UserManagerAgent");
+//				CustomerAgent.createAgent("UserManager1", "bookstore.UserManagerAgent");
 				jFrame.dispose();
 
 			}
