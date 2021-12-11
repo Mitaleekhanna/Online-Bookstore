@@ -112,14 +112,13 @@ public class CustomerHome extends JFrame {
 		 this.jFrame.addWindowListener(new java.awt.event.WindowAdapter() {
 	            @Override
 	            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-	                super.windowClosing(windowEvent);
+	               
+	                CustomerAgent.deregister();
 	                CustomerAgent.killAgent(CustomerAgent.getLocalName());
-	                try {
-						CustomerAgent.deregister();
-					} catch (FIPAException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+	                super.windowClosing(windowEvent);
+						
+							
+						
 	            }
 	        });
 		this.jFrame.setSize(400, 400);
@@ -510,13 +509,9 @@ public class CustomerHome extends JFrame {
 //				JFrame login = new Login();
 //				login.setVisible(true);
 //				dispose();
+				CustomerAgent.deregister();
 				CustomerAgent.killAgent(CustomerAgent.getLocalName());
-				try {
-					CustomerAgent.deregister();
-				} catch (FIPAException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				
 				CustomerAgent.createAgent("UserManager1", "bookstore.UserManagerAgent");
 				jFrame.dispose();
 

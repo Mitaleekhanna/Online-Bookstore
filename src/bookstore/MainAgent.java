@@ -37,9 +37,14 @@ public class MainAgent extends Agent {
         }
     }
 
-    protected void deregister() throws FIPAException {
+    protected void deregister()  {
         System.out.println("Deregistering" + getLocalName());
-        DFService.deregister(this);
+        try {
+			DFService.deregister(this);
+		} catch (FIPAException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
        }
 
 
